@@ -27,7 +27,7 @@ export class DownloadParse {
 
   async run(): Promise<this> {
     if (!(await this.releaseDirExists())) {
-      this.downloadSchemas();
+      await this.downloadSchemas();
     }
 
     await this.readSchemas();
@@ -88,10 +88,15 @@ export class DownloadParse {
     );
   }
 
-  private downloadSchemas(): void {
-    this.schemaTypes.map((type: string) =>
-      request(this.getDownloadArchiveUrl(type)).pipe(
-        unzipper.Extract({ path: this.outDir })
+  private async downloadSchemas(): Promise<void> {
+    await Promise.all(
+      this.schemaTypes.map(
+        (type: string) =>
+          new Promise(resolve =>
+            request(this.getDownloadArchiveUrl(type))
+              .pipe(unzipper.Extract({ path: this.outDir }))
+              .on('finish', resolve)
+          )
       )
     );
   }
