@@ -2,6 +2,12 @@
 
 Lets you programmatically consume the WebExtensions Schema JSON files
 
+## Install
+
+```
+npm install webextensions-schema
+```
+
 ## Usage
 
 ```ts
