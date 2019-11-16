@@ -28,7 +28,11 @@ import webExtensionsSchema from 'webextensions-schema';
   - `{Object}` options
     - `tag` [Any tag from mozilla-unified is valid](https://hg.mozilla.org/mozilla-unified/tags). Defaults to `FIREFOX_70_0_1_RELEASE`
 
-Returns the `schema` instance
+Ships with the schema files for `FIREFOX_70_0_1_RELEASE`. When another tag is
+given, the appropriate schema files are downloaded once and cached for future
+calls.
+
+Returns Promise resolving to the `schema` instance
 
 ### schema.getRaw
 
