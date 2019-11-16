@@ -12,7 +12,7 @@ export class DownloadParse {
   private readonly mozillaUnifiedArchiveURL =
     'https://hg.mozilla.org/mozilla-unified/archive';
   private readonly outDir = path.join(__dirname, '..', 'downloads');
-  private readonly schemasDir = 'components/extensions/schemas/';
+  private readonly schemasDir = ['components', 'extensions', 'schemas'];
   private readonly schemaTypes = ['browser', 'toolkit'];
   private releaseDir: string;
   private schemas: Schema = {
@@ -70,7 +70,7 @@ export class DownloadParse {
   private async readSchemas(): Promise<void> {
     await Promise.all(
       this.schemaTypes.map(async type => {
-        const dir = path.join(this.releaseDir, type, this.schemasDir);
+        const dir = path.join(this.releaseDir, type, ...this.schemasDir);
         const files = await fs.readdir(dir);
 
         await Promise.all(
@@ -111,6 +111,8 @@ export class DownloadParse {
   }
 
   private getDownloadArchiveUrl(type: string): string {
-    return `${this.mozillaUnifiedArchiveURL}/${this.tag}.zip/${type}/${this.schemasDir}`;
+    return `${this.mozillaUnifiedArchiveURL}/${
+      this.tag
+    }.zip/${type}/${this.schemasDir.join('/')}`;
   }
 }
