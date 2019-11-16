@@ -1,0 +1,50 @@
+{
+  "name": "webextensions-schema",
+  "version": "0.1.0",
+  "description": "Programmatically consume the WebExtensions Schema JSON files",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stoically/webextensions-schema.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "keywords": [
+    "webextensions",
+    "schemas"
+  ],
+  "author": "stoically <stoically@protonmail.com>",
+  "homepage": "https://github.com/stoically/webextensions-schema",
+  "bugs": {
+    "url": "https://github.com/stoically/webextensions-schema/issues"
+  },
+  "license": "MPL-2.0",
+  "files": [
+    "dist",
+    "downloads"
+  ],
+  "types": "dist",
+  "devDependencies": {
+    "@types/request": "^2.48.3",
+    "@types/unzipper": "^0.10.1",
+    "@typescript-eslint/eslint-plugin": "^2.7.0",
+    "@typescript-eslint/parser": "^2.7.0",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "request": "^2.88.0",
+    "strip-json-comments": "^3.0.1",
+    "unzipper": "^0.10.5"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "singleQuote": true
+  }
+}
