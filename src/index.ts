@@ -17,7 +17,7 @@ class WebExtensionsSchemas {
     return this.schemas.raw;
   }
 
-  getAllNamespaces(): SchemaNamespaces {
+  getNamespaces(): SchemaNamespaces {
     return this.schemas.namespaces;
   }
 }
