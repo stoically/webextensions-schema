@@ -6,7 +6,7 @@ import {
 } from './types';
 import { DownloadParse } from './download-parse';
 
-class WebExtensionsSchemas {
+export class WebExtensionsSchema {
   private schemas: Schema;
 
   constructor({ schemas }: { schemas: Schema }) {
@@ -22,10 +22,13 @@ class WebExtensionsSchemas {
   }
 }
 
-export default async (
+const webExtensionsSchema = async (
   options: WebExtensionsSchemaOptions = {}
-): Promise<WebExtensionsSchemas> => {
+): Promise<WebExtensionsSchema> => {
   const downloadParse = await new DownloadParse(options).run();
   const schemas = downloadParse.getSchemas();
-  return new WebExtensionsSchemas({ schemas });
+  return new WebExtensionsSchema({ schemas });
 };
+
+export default webExtensionsSchema;
+export * from './types';

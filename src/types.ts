@@ -60,14 +60,14 @@ export interface NamespaceSchema {
   permissions?: string[];
 }
 
-interface NameDesc {
+export interface NameDesc {
   name: string;
   description: string;
 }
 
-type Enum = string | NameDesc;
+export type Enum = string | NameDesc;
 
-interface TypeSchema {
+export interface TypeSchema {
   id?: string;
   name?: string;
   $ref?: string;
@@ -98,7 +98,7 @@ interface TypeSchema {
   converterAdditionalType?: string;
 }
 
-interface Indexable<V> {
+export interface Indexable<V> {
   [k: string]: V;
 }
 // ------------------------------------------------------------------------------------------------------

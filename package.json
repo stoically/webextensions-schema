@@ -8,8 +8,11 @@
     "url": "git+https://github.com/stoically/webextensions-schema.git"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch"
+    "build": "npm run lint && npm run test && tsc",
+    "watch": "tsc --watch",
+    "lint": "eslint {src,test}/**/*.ts",
+    "test": "ts-mocha"
+
   },
   "keywords": [
     "webextensions",
@@ -27,6 +30,7 @@
   ],
   "types": "dist",
   "devDependencies": {
+    "@types/mocha": "^5.2.7",
     "@types/request": "^2.48.3",
     "@types/unzipper": "^0.10.1",
     "@typescript-eslint/eslint-plugin": "^2.7.0",
@@ -34,7 +38,9 @@
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-prettier": "^3.1.1",
+    "mocha": "^6.2.2",
     "prettier": "^1.19.1",
+    "ts-mocha": "^6.0.0",
     "typescript": "^3.7.2"
   },
   "dependencies": {
