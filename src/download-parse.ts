@@ -9,12 +9,12 @@ const DEFAULT_TAG = 'FIREFOX_70_0_1_RELEASE';
 
 export class DownloadParse {
   private tag: string;
-  private readonly mozillaUnifiedArchiveURL =
+  private readonly archiveURL =
     'https://hg.mozilla.org/mozilla-unified/archive';
   private readonly outDir = path.join(__dirname, '..', 'downloads');
   private readonly schemasDir = ['components', 'extensions', 'schemas'];
   private readonly schemaTypes = ['browser', 'toolkit'];
-  private releaseDir: string;
+  private tagDir: string;
   private schemas: Schema = {
     raw: new Map(),
     namespaces: new Map(),
@@ -22,7 +22,7 @@ export class DownloadParse {
 
   constructor({ tag }: { tag?: string } = {}) {
     this.tag = tag || DEFAULT_TAG;
-    this.releaseDir = path.join(this.outDir, `mozilla-unified-${this.tag}`);
+    this.tagDir = path.join(this.outDir, `mozilla-unified-${this.tag}`);
   }
 
   async run(): Promise<this> {
@@ -70,7 +70,7 @@ export class DownloadParse {
   private async readSchemas(): Promise<void> {
     await Promise.all(
       this.schemaTypes.map(async type => {
-        const dir = path.join(this.releaseDir, type, ...this.schemasDir);
+        const dir = path.join(this.tagDir, type, ...this.schemasDir);
         const files = await fs.readdir(dir);
 
         await Promise.all(
@@ -103,7 +103,7 @@ export class DownloadParse {
 
   private async releaseDirExists(): Promise<boolean> {
     try {
-      await fs.access(this.releaseDir);
+      await fs.access(this.tagDir);
       return true;
     } catch (error) {
       return false;
@@ -111,8 +111,8 @@ export class DownloadParse {
   }
 
   private getDownloadArchiveUrl(type: string): string {
-    return `${this.mozillaUnifiedArchiveURL}/${
-      this.tag
-    }.zip/${type}/${this.schemasDir.join('/')}`;
+    return [this.archiveURL, `${this.tag}.zip`, type, ...this.schemasDir].join(
+      '/'
+    );
   }
 }
