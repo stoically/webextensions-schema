@@ -3,6 +3,12 @@ export type Namespace = string;
 
 export interface CombinedNamespaceSchema extends NamespaceSchema {
   manifest?: NamespaceSchema;
+  childs?: SchemaNamespaces;
+}
+
+export interface CombinedNamespaceChildSchema extends NamespaceSchema {
+  namespacechild: string;
+  manifest?: NamespaceSchema;
 }
 
 export type SchemaRaw = Map<Filename, NamespaceSchema[]>;

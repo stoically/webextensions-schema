@@ -3,7 +3,7 @@ import path from 'path';
 import request from 'request';
 import unzipper from 'unzipper';
 import stripJsonComments from 'strip-json-comments';
-import { Schema, CombinedNamespaceSchema } from './types';
+import { Schema, NamespaceSchema } from './types';
 
 const DEFAULT_TAG = 'FIREFOX_70_0_1_RELEASE';
 
@@ -41,33 +41,57 @@ export class DownloadParse {
   }
 
   private extractNamespaces(): void {
-    const namespaces: CombinedNamespaceSchema[] = [];
     this.schemas.raw.forEach(schemaJson => {
-      const manifest = schemaJson.find(
-        ({ namespace }) => namespace === 'manifest'
-      );
+      let manifest: NamespaceSchema;
+      schemaJson
+        .filter(namespace => {
+          if (namespace.namespace === 'manifest') {
+            manifest = namespace;
+            return false;
+          }
+          return true;
+        })
+        .forEach(namespace => {
+          const childs = namespace.namespace.split('.');
+          if (childs.length === 1) {
+            this.schemas.namespaces.set(namespace.namespace, {
+              ...namespace,
+              manifest,
+            });
+          } else {
+            this.extractNamespaceChilds(namespace, manifest, childs);
+          }
+        });
+    });
+  }
 
-      schemaJson.forEach(namespace => {
-        if (namespace.namespace === 'manifest') {
-          return;
-        }
-        namespaces.push({
+  private extractNamespaceChilds(
+    namespace: NamespaceSchema,
+    manifest: NamespaceSchema,
+    childs: string[]
+  ): void {
+    let parent = this.schemas.namespaces.get(childs[0]);
+    childs.splice(1).forEach(childname => {
+      if (!parent) {
+        return;
+      }
+      if (!parent.childs) {
+        parent.childs = new Map();
+      }
+      if (!parent.childs.has(childname)) {
+        parent.childs.set(childname, {
           ...namespace,
           manifest,
         });
-      });
+      }
+      parent = parent.childs.get(childname);
     });
-
-    this.schemas.namespaces = new Map(
-      namespaces
-        .sort((a, b) =>
-          a.namespace < b.namespace ? -1 : a.namespace > b.namespace ? 1 : 0
-        )
-        .map(namespace => [namespace.namespace, namespace])
-    );
   }
 
   private async readSchemas(): Promise<void> {
+    const schemas: {
+      [key: string]: NamespaceSchema[];
+    } = {};
     await Promise.all(
       this.schemaTypes.map(async type => {
         const dir = path.join(this.tagDir, type, ...this.schemasDir);
@@ -80,12 +104,20 @@ export class DownloadParse {
             }
 
             const jsonBuffer = await fs.readFile(path.join(dir, file));
-            const schema = JSON.parse(stripJsonComments(jsonBuffer.toString()));
-            this.schemas.raw.set(file, schema);
+            const schema: NamespaceSchema[] = JSON.parse(
+              stripJsonComments(jsonBuffer.toString())
+            );
+            schemas[file] = schema;
           })
         );
       })
     );
+
+    Object.keys(schemas)
+      .sort()
+      .forEach(file => {
+        this.schemas.raw.set(file, schemas[file]);
+      });
   }
 
   private async downloadSchemas(): Promise<void> {
