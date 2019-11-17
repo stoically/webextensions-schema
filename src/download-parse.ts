@@ -9,13 +9,13 @@ const DEFAULT_TAG = 'FIREFOX_70_0_1_RELEASE';
 
 export class DownloadParse {
   private tag: string;
+  private tagDir: string;
   private readonly archiveURL =
     'https://hg.mozilla.org/mozilla-unified/archive';
   private readonly outDir = path.join(__dirname, '..', 'downloads');
-  private readonly schemasDir = ['components', 'extensions', 'schemas'];
   private readonly schemaTypes = ['browser', 'toolkit'];
-  private tagDir: string;
-  private schemas: Schema = {
+  private readonly schemasDir = ['components', 'extensions', 'schemas'];
+  private readonly schemas: Schema = {
     raw: new Map(),
     namespaces: new Map(),
   };
