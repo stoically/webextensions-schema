@@ -16,6 +16,7 @@ jobs:
     - run: |
         npm install
         npm run build
+        npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
         npm publish
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
