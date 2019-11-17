@@ -26,7 +26,7 @@ export class DownloadParse {
   }
 
   async run(): Promise<this> {
-    if (!(await this.releaseDirExists())) {
+    if (!(await this.tagDirExists())) {
       await this.downloadSchemas();
     }
 
@@ -133,7 +133,7 @@ export class DownloadParse {
     );
   }
 
-  private async releaseDirExists(): Promise<boolean> {
+  private async tagDirExists(): Promise<boolean> {
     try {
       await fs.access(this.tagDir);
       return true;
