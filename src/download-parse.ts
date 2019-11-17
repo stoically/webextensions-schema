@@ -122,15 +122,25 @@ export class DownloadParse {
 
   private async downloadSchemas(): Promise<void> {
     await Promise.all(
-      this.schemaTypes.map(
-        (type: string) =>
-          new Promise(resolve =>
-            request(this.getDownloadArchiveUrl(type))
-              .pipe(unzipper.Extract({ path: this.outDir }))
-              .on('finish', resolve)
-          )
-      )
+      this.schemaTypes.map((type: string) => this.downloadSchema(type))
     );
+  }
+
+  private async downloadSchema(type: string): Promise<void> {
+    return new Promise(resolve => {
+      const url = this.getDownloadArchiveUrl(type);
+      request.get(url).on('response', response => {
+        if (response.statusCode !== 200) {
+          throw new Error(
+            `http status ${response.statusCode} while trying to download ${url} - probably invalid tag name`
+          );
+        }
+
+        response
+          .pipe(unzipper.Extract({ path: this.outDir }))
+          .on('finish', resolve);
+      });
+    });
   }
 
   private async tagDirExists(): Promise<boolean> {
