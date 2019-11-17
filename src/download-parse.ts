@@ -40,6 +40,10 @@ export class DownloadParse {
     return this.schemas;
   }
 
+  getTag(): string {
+    return this.tag;
+  }
+
   private extractNamespaces(): void {
     this.schemas.raw.forEach(schemaJson => {
       let manifest: NamespaceSchema;

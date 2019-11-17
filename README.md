@@ -43,3 +43,7 @@ Returns `Map` with schema filename as key and parsed JSON as content
 Returns `Map` with namespace name as key and parsed JSON, combined with manifest
 if present, as content. Namespaces containing dots are automatically nested
 into the `childs` property of the parent namespace.
+
+### schema.getTag
+
+Returns `string` with tag name that was used for the `schema` instance

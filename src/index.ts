@@ -8,9 +8,11 @@ import { DownloadParse } from './download-parse';
 
 export class WebExtensionsSchema {
   private schemas: Schema;
+  private tag: string;
 
-  constructor({ schemas }: { schemas: Schema }) {
+  constructor({ schemas, tag }: { schemas: Schema; tag: string }) {
     this.schemas = schemas;
+    this.tag = tag;
   }
 
   getRaw(): SchemaRaw {
@@ -20,6 +22,10 @@ export class WebExtensionsSchema {
   getNamespaces(): SchemaNamespaces {
     return this.schemas.namespaces;
   }
+
+  getTag(): string {
+    return this.tag;
+  }
 }
 
 const webExtensionsSchema = async (
@@ -27,7 +33,8 @@ const webExtensionsSchema = async (
 ): Promise<WebExtensionsSchema> => {
   const downloadParse = await new DownloadParse(options).run();
   const schemas = downloadParse.getSchemas();
-  return new WebExtensionsSchema({ schemas });
+  const tag = downloadParse.getTag();
+  return new WebExtensionsSchema({ schemas, tag });
 };
 
 export default webExtensionsSchema;
