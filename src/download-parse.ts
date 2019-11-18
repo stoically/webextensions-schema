@@ -5,13 +5,14 @@ import unzipper from 'unzipper';
 import stripJsonComments from 'strip-json-comments';
 import { Schema, NamespaceSchema } from './types';
 
-const DEFAULT_TAG = 'FIREFOX_70_0_1_RELEASE';
-
 export class DownloadParse {
-  private tag: string;
-  private tagDir: string;
-  private readonly archiveURL =
+  private _tag!: string;
+  private tagDir!: string;
+  private readonly mozRepo = 'mozilla-unified';
+  private readonly mozArchiveURL =
     'https://hg.mozilla.org/mozilla-unified/archive';
+  private readonly mozLatestFxURL =
+    'https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US';
   private readonly outDir = path.join(__dirname, '..', 'downloads');
   private readonly schemaTypes = ['browser', 'toolkit'];
   private readonly schemasDir = ['components', 'extensions', 'schemas'];
@@ -21,11 +22,22 @@ export class DownloadParse {
   };
 
   constructor({ tag }: { tag?: string } = {}) {
-    this.tag = tag || DEFAULT_TAG;
-    this.tagDir = path.join(this.outDir, `mozilla-unified-${this.tag}`);
+    this.tag = tag || 'auto';
+  }
+
+  set tag(tag: string) {
+    this._tag = tag;
+    this.tagDir = path.join(this.outDir, `${this.mozRepo}-${tag}`);
+  }
+
+  get tag(): string {
+    return this._tag;
   }
 
   async run(): Promise<this> {
+    if (this.tag === 'auto') {
+      await this.resolveAutoTag();
+    }
     if (!(await this.tagDirExists())) {
       await this.downloadSchemas();
     }
@@ -156,9 +168,32 @@ export class DownloadParse {
     }
   }
 
+  private async resolveAutoTag(): Promise<void> {
+    return new Promise(resolve => {
+      request
+        .head({ followRedirect: false, url: this.mozLatestFxURL })
+        .on('response', response => {
+          const [, release] =
+            response.headers.location?.match(
+              /\/pub\/firefox\/releases\/([^/]+)\//
+            ) || [];
+
+          if (!release) {
+            throw new Error("Couldn't automatically resolve latest stable tag");
+          }
+
+          this.tag = `FIREFOX_${release.replace(/\./g, '_')}_RELEASE`;
+          resolve();
+        });
+    });
+  }
+
   private getDownloadArchiveUrl(type: string): string {
-    return [this.archiveURL, `${this.tag}.zip`, type, ...this.schemasDir].join(
-      '/'
-    );
+    return [
+      this.mozArchiveURL,
+      `${this.tag}.zip`,
+      type,
+      ...this.schemasDir,
+    ].join('/');
   }
 }
