@@ -22,7 +22,9 @@ export class DownloadParse {
   };
 
   constructor({ tag }: { tag?: string } = {}) {
-    this.tag = tag || 'auto';
+    if (tag) {
+      this.tag = tag;
+    }
   }
 
   set tag(tag: string) {
@@ -35,14 +37,14 @@ export class DownloadParse {
   }
 
   async run(): Promise<this> {
-    if (this.tag === 'auto') {
-      await this.resolveAutoTag();
+    if (!this.tag) {
+      await this.fetchLatestStableTag();
     }
     if (!(await this.tagDirExists())) {
       await this.downloadSchemas();
     }
 
-    await this.readSchemas();
+    await this.parseSchemas();
     this.extractNamespaces();
 
     return this;
@@ -104,7 +106,7 @@ export class DownloadParse {
     });
   }
 
-  private async readSchemas(): Promise<void> {
+  private async parseSchemas(): Promise<void> {
     const schemas: {
       [key: string]: NamespaceSchema[];
     } = {};
@@ -168,7 +170,7 @@ export class DownloadParse {
     }
   }
 
-  private async resolveAutoTag(): Promise<void> {
+  private async fetchLatestStableTag(): Promise<void> {
     return new Promise(resolve => {
       request
         .head({ followRedirect: false, url: this.mozLatestFxURL })
