@@ -25,25 +25,49 @@ import webExtensionsSchema from 'webextensions-schema';
 
 - Arguments
   - `{Object}` options
-    - `tag` [Any tag, except `tip`, from mozilla-unified is valid](https://hg.mozilla.org/mozilla-unified/tags). Defaults to `FIREFOX_70_0_1_RELEASE`
+    - `tag` [Any tag, except `tip`, from mozilla-unified is valid](https://hg.mozilla.org/mozilla-unified/tags)
 
-Ships with the schema files for `FIREFOX_70_0_1_RELEASE`. When another tag is
-given, the appropriate schema files are downloaded once and cached for future
-calls.
+By default, when no tag is given, the latest stable release tag is used.
 
-Returns `Promise` resolving to the `schema` instance
+Ships with the schema files for the following tags
+- `FIREFOX_70_0_1_RELEASE`
+- `FIREFOX_69_0_3_RELEASE`
+- `FIREFOX_68_0_2_RELEASE`
+- `FIREFOX_67_0_4_RELEASE`
+
+If schema files for a tag don't exist, the appropriate schema files are
+downloaded once and saved for future calls.
+
+Returns a `Promise` resolving to the `schema` instance
 
 ### schema.getRaw
 
-Returns `Map` with schema filename as key and parsed JSON as content
+Returns a `Map` with schema filename as key and parsed JSON as content
 
 
 ### schema.getNamespaces
 
-Returns `Map` with namespace name as key and parsed JSON, combined with manifest
-if present, as content. Namespaces containing dots are automatically nested
-into the `childs` property of the parent namespace.
+Returns a `Map` with namespace name as key and namespace values, combined with
+manifest if present, as content. Namespaces containing dots are automatically
+nested into the `childs` property of the parent namespace.
+
+Sample:
+
+```js
+Map {
+  },
+  'privacy' => {
+    namespace: 'privacy',
+    permissions: [ 'privacy' ],
+    manifest: { namespace: 'manifest', types: [Array] },
+    childs: Map {
+      'network' => [Object],
+      'services' => [Object],
+      'websites' => [Object]
+    }
+  },
+```
 
 ### schema.getTag
 
-Returns `string` with tag name that was used for the `schema` instance
+Returns a `string` with tag name that was used for the `schema` instance
