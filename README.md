@@ -1,6 +1,6 @@
 # WebExtensions Schema
 
-Programmatically consume the WebExtensions Schema JSON files
+Programmatically consume the WebExtensions Schema JSON files. Defaults to the latest stable ones.
 
 ## Install
 
@@ -25,24 +25,19 @@ import webExtensionsSchema from 'webextensions-schema';
 
 - Arguments
   - `{Object}` options
-    - `tag` [Any tag, except `tip`, from mozilla-unified is valid](https://hg.mozilla.org/mozilla-unified/tags)
+    - `tag` Any tag, except `tip`, [from mozilla-unified](https://hg.mozilla.org/mozilla-unified/tags) is valid. Default: Automatically fetches the latest stable release tag from `download.mozilla.org`.
 
-By default, when no tag is given, the latest stable release tag is used.
 
-Ships with the schema files for the following tags
-- `FIREFOX_70_0_1_RELEASE`
-- `FIREFOX_69_0_3_RELEASE`
-- `FIREFOX_68_0_2_RELEASE`
-- `FIREFOX_67_0_4_RELEASE`
+Schema files for a tag that don't exist in the [`.schemas`
+directory](https://github.com/stoically/webextensions-schema/tree/master/.schemas)
+are downloaded once and saved there for future calls. Already ships with some
+schema files (feel free to PR to add newer ones).
 
-If schema files for a tag don't exist, the appropriate schema files are
-downloaded once and saved for future calls.
-
-Returns a `Promise` resolving to the `schema` instance
+Returns a `Promise` resolving to the `schema` instance.
 
 ### schema.getRaw
 
-Returns a `Map` with schema filename as key and parsed JSON as content
+Returns a `Map` with schema filename as key and parsed JSON as content.
 
 
 ### schema.getNamespaces
@@ -55,19 +50,23 @@ Sample:
 
 ```js
 Map {
-  },
+  ...
   'privacy' => {
     namespace: 'privacy',
     permissions: [ 'privacy' ],
     manifest: { namespace: 'manifest', types: [Array] },
     childs: Map {
-      'network' => [Object],
+      'network' => {
+        namespace: 'privacy.network',
+        ...
+      },
       'services' => [Object],
       'websites' => [Object]
     }
   },
+  ...
 ```
 
 ### schema.getTag
 
-Returns a `string` with tag name that was used for the `schema` instance
+Returns a `string` with tag name that was used for the `schema` instance.
