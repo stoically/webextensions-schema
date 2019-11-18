@@ -11,7 +11,7 @@
     "build": "npm run lint && npm run test && tsc",
     "watch": "tsc --watch",
     "lint": "eslint {src,test}/**/*.ts",
-    "test": "tsc -p test/tsconfig.json && ts-mocha"
+    "test": "tsc -p test/tsconfig.json && ts-mocha --timeout 30000"
   },
   "keywords": [
     "webextensions",
