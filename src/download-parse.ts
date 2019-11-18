@@ -13,7 +13,7 @@ export class DownloadParse {
     'https://hg.mozilla.org/mozilla-unified/archive';
   private readonly mozLatestFxURL =
     'https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US';
-  private readonly outDir = path.join(__dirname, '..', 'downloads');
+  private readonly outDir = path.join(__dirname, '..', '.schemas');
   private readonly schemaTypes = ['browser', 'toolkit'];
   private readonly schemasDir = ['components', 'extensions', 'schemas'];
   private readonly schemas: Schema = {
