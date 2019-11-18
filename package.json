@@ -1,6 +1,6 @@
 {
   "name": "webextensions-schema",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Programmatically consume the WebExtensions Schema JSON files",
   "main": "dist/index.js",
   "repository": {
