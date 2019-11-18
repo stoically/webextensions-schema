@@ -35,15 +35,15 @@ schema files (feel free to PR to add newer ones).
 
 Returns a `Promise` resolving to the `schema` instance.
 
-### schema.getRaw
+### schema.raw()
 
-Returns a `Map` with schema filename as key and parsed JSON as content.
+Returns a `Map` with schema filename as key and parsed JSON as value.
 
 
-### schema.getNamespaces
+### schema.namespaces()
 
-Returns a `Map` with namespace name as key and namespace values, combined with
-manifest if present, as content. Namespaces containing dots are automatically
+Returns a `Map` with namespace name as key and namespace content as value,
+combined with manifest if present. Namespaces containing dots are automatically
 nested into the `childs` property of the parent namespace.
 
 Sample:
@@ -67,6 +67,6 @@ Map {
   ...
 ```
 
-### schema.getTag
+### schema.tag()
 
 Returns a `string` with tag name that was used for the `schema` instance.

@@ -7,24 +7,24 @@ import {
 import { DownloadParse } from './download-parse';
 
 export class WebExtensionsSchema {
-  private schemas: Schema;
-  private tag: string;
+  private _schemas: Schema;
+  private _tag: string;
 
   constructor({ schemas, tag }: { schemas: Schema; tag: string }) {
-    this.schemas = schemas;
-    this.tag = tag;
+    this._schemas = schemas;
+    this._tag = tag;
   }
 
-  getRaw(): SchemaRaw {
-    return this.schemas.raw;
+  raw(): SchemaRaw {
+    return this._schemas.raw;
   }
 
-  getNamespaces(): SchemaNamespaces {
-    return this.schemas.namespaces;
+  namespaces(): SchemaNamespaces {
+    return this._schemas.namespaces;
   }
 
-  getTag(): string {
-    return this.tag;
+  tag(): string {
+    return this._tag;
   }
 }
 
