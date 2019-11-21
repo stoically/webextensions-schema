@@ -2,17 +2,16 @@ import assert from 'assert';
 import webExtensionsSchema from '../src';
 
 describe('WebExtensionsSchema', () => {
-  it('should parse the schema files', async () => {
+  it('should provide the raw schema', async () => {
     const schema = await webExtensionsSchema();
     const privacy = schema.raw()['privacy.json'];
     assert(Array.isArray(privacy));
   });
 
-  it('should convert the schema files into combined namespaces', async () => {
+  it('should provide the schema namespaces', async () => {
     const schema = await webExtensionsSchema();
-    const { privacy } = schema.namespaces();
-    assert(privacy.manifest);
+    const { privacy, manifest } = schema.namespaces();
     assert(privacy.namespace === 'privacy');
-    assert(privacy.childs?.network.namespace === 'privacy.network');
+    assert(Array.isArray(manifest.types));
   });
 });

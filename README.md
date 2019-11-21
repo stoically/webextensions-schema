@@ -38,31 +38,43 @@ Returns a `Promise` resolving to the `schema` instance.
 
 Returns an `Object` with schema filename as key and parsed JSON as value.
 
+Sample:
+
+```js
+{
+  'tabs.json': [
+    { namespace: 'manifest', types: [Array] },
+    {
+      namespace: 'tabs',
+      ...
+    }
+  ]
+}
+```
+
 ### schema.namespaces()
 
-Returns an `Object` with namespace name as key and namespace content as value,
-combined with manifest if present. Namespaces containing dots are automatically
-nested as `Object` into the `childs` property of the parent namespace.
+Returns an `Object` with namespace name as key and namespace content as value. Multiple manifest namespaces are combined into one `manifest` namespace.
 
 Sample:
 
 ```js
 {
-  ...
-  privacy: {
-    namespace: 'privacy',
-    permissions: [ 'privacy' ],
-    manifest: { namespace: 'manifest', types: [Array] },
-    childs: {
-      network: {
-        namespace: 'privacy.network',
-        ...
-      },
-      services: [Object],
-      websites: [Object]
-    }
+  manifest: {
+    namespace: 'manifest',
+    types: [
+      [Object], [Object], [Object], [Object], [Object],
+      ...
+    ]
   },
-  ...
+  tabs: {
+    namespace: 'tabs',
+    functions: [
+      [Object], [Object], [Object],
+      ...
+    ]
+  }
+}
 ```
 
 ### schema.tag()

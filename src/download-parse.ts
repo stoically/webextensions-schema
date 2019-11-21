@@ -60,50 +60,31 @@ export class DownloadParse {
 
   private extractNamespaces(): void {
     Object.values(this.schemas.raw).forEach(schemaJson => {
-      let manifest: NamespaceSchema;
       schemaJson
-        .filter(namespace => {
-          if (namespace.namespace === 'manifest') {
-            manifest = namespace;
-            return false;
-          }
-          return true;
-        })
+        .filter(namespace =>
+          namespace.namespace === 'manifest'
+            ? this.extractManifest(namespace)
+            : true
+        )
         .forEach(namespace => {
-          const childs = namespace.namespace.split('.');
-          if (childs.length === 1) {
-            this.schemas.namespaces[namespace.namespace] = {
-              ...namespace,
-              manifest,
-            };
-          } else {
-            this.extractNamespaceChilds(namespace, manifest, childs);
-          }
+          this.schemas.namespaces[namespace.namespace] = namespace;
         });
     });
   }
 
-  private extractNamespaceChilds(
-    namespace: NamespaceSchema,
-    manifest: NamespaceSchema,
-    childs: string[]
-  ): void {
-    let parent = this.schemas.namespaces[childs[0]];
-    childs.splice(1).forEach(childname => {
-      if (!parent) {
-        return;
-      }
-      if (!parent.childs) {
-        parent.childs = {};
-      }
-      if (!parent.childs[childname]) {
-        parent.childs[childname] = {
-          ...namespace,
-          manifest,
-        };
-      }
-      parent = parent.childs[childname];
-    });
+  private extractManifest(namespace: NamespaceSchema): false {
+    if (!this.schemas.namespaces.manifest) {
+      this.schemas.namespaces.manifest = namespace;
+    }
+    if (!this.schemas.namespaces.manifest.types) {
+      this.schemas.namespaces.manifest.types = [];
+    }
+    if (namespace.types) {
+      this.schemas.namespaces.manifest.types = this.schemas.namespaces.manifest.types.concat(
+        namespace.types
+      );
+    }
+    return false;
   }
 
   private async parseSchemas(): Promise<void> {

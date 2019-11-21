@@ -1,14 +1,9 @@
-export interface CombinedNamespaceSchema extends NamespaceSchema {
-  manifest?: NamespaceSchema;
-  childs?: SchemaNamespaces;
-}
-
 export interface SchemaRaw {
   [key: string]: NamespaceSchema[];
 }
 
 export interface SchemaNamespaces {
-  [key: string]: CombinedNamespaceSchema;
+  [key: string]: NamespaceSchema;
 }
 
 export interface Schema {
