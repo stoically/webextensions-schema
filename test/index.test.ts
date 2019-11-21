@@ -10,9 +10,9 @@ describe('WebExtensionsSchema', () => {
 
   it('should convert the schema files into combined namespaces', async () => {
     const schema = await webExtensionsSchema();
-    const privacy = schema.namespaces().privacy;
-    assert(privacy?.manifest);
-    assert(privacy?.namespace === 'privacy');
-    assert(privacy?.childs?.network?.namespace === 'privacy.network');
+    const { privacy } = schema.namespaces();
+    assert(privacy.manifest);
+    assert(privacy.namespace === 'privacy');
+    assert(privacy.childs?.network.namespace === 'privacy.network');
   });
 });
