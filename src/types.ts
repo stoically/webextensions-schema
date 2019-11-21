@@ -1,18 +1,15 @@
-export type Filename = string;
-export type Namespace = string;
-
 export interface CombinedNamespaceSchema extends NamespaceSchema {
   manifest?: NamespaceSchema;
   childs?: SchemaNamespaces;
 }
 
-export interface CombinedNamespaceChildSchema extends NamespaceSchema {
-  namespacechild: string;
-  manifest?: NamespaceSchema;
+export interface SchemaRaw {
+  [key: string]: NamespaceSchema[];
 }
 
-export type SchemaRaw = Map<Filename, NamespaceSchema[]>;
-export type SchemaNamespaces = Map<Namespace, CombinedNamespaceSchema>;
+export interface SchemaNamespaces {
+  [key: string]: CombinedNamespaceSchema;
+}
 
 export interface Schema {
   raw: SchemaRaw;

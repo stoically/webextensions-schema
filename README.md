@@ -27,7 +27,6 @@ import webExtensionsSchema from 'webextensions-schema';
   - `{Object}` options
     - `tag` Any tag, except `tip`, [from mozilla-unified](https://hg.mozilla.org/mozilla-unified/tags) is valid. Default: Automatically fetches the latest stable release tag from `download.mozilla.org`.
 
-
 Schema files for a tag that don't exist in the [`.schemas`
 directory](https://github.com/stoically/webextensions-schema/tree/master/.schemas)
 are downloaded once and saved there for future calls. Already ships with some
@@ -37,31 +36,30 @@ Returns a `Promise` resolving to the `schema` instance.
 
 ### schema.raw()
 
-Returns a `Map` with schema filename as key and parsed JSON as value.
-
+Returns an `Object` with schema filename as key and parsed JSON as value.
 
 ### schema.namespaces()
 
-Returns a `Map` with namespace name as key and namespace content as value,
+Returns an `Object` with namespace name as key and namespace content as value,
 combined with manifest if present. Namespaces containing dots are automatically
-nested into the `childs` property of the parent namespace.
+nested as `Object` into the `childs` property of the parent namespace.
 
 Sample:
 
 ```js
-Map {
+{
   ...
-  'privacy' => {
+  privacy: {
     namespace: 'privacy',
     permissions: [ 'privacy' ],
     manifest: { namespace: 'manifest', types: [Array] },
-    childs: Map {
-      'network' => {
+    childs: {
+      network: {
         namespace: 'privacy.network',
         ...
       },
-      'services' => [Object],
-      'websites' => [Object]
+      services: [Object],
+      websites: [Object]
     }
   },
   ...

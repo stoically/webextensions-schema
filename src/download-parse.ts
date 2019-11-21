@@ -17,8 +17,8 @@ export class DownloadParse {
   private readonly schemaTypes = ['browser', 'toolkit'];
   private readonly schemasDir = ['components', 'extensions', 'schemas'];
   private readonly schemas: Schema = {
-    raw: new Map(),
-    namespaces: new Map(),
+    raw: {},
+    namespaces: {},
   };
 
   constructor({ tag }: { tag?: string } = {}) {
@@ -59,7 +59,7 @@ export class DownloadParse {
   }
 
   private extractNamespaces(): void {
-    this.schemas.raw.forEach(schemaJson => {
+    Object.values(this.schemas.raw).forEach(schemaJson => {
       let manifest: NamespaceSchema;
       schemaJson
         .filter(namespace => {
@@ -72,10 +72,10 @@ export class DownloadParse {
         .forEach(namespace => {
           const childs = namespace.namespace.split('.');
           if (childs.length === 1) {
-            this.schemas.namespaces.set(namespace.namespace, {
+            this.schemas.namespaces[namespace.namespace] = {
               ...namespace,
               manifest,
-            });
+            };
           } else {
             this.extractNamespaceChilds(namespace, manifest, childs);
           }
@@ -88,26 +88,26 @@ export class DownloadParse {
     manifest: NamespaceSchema,
     childs: string[]
   ): void {
-    let parent = this.schemas.namespaces.get(childs[0]);
+    let parent = this.schemas.namespaces[childs[0]];
     childs.splice(1).forEach(childname => {
       if (!parent) {
         return;
       }
       if (!parent.childs) {
-        parent.childs = new Map();
+        parent.childs = {};
       }
-      if (!parent.childs.has(childname)) {
-        parent.childs.set(childname, {
+      if (!parent.childs[childname]) {
+        parent.childs[childname] = {
           ...namespace,
           manifest,
-        });
+        };
       }
-      parent = parent.childs.get(childname);
+      parent = parent.childs[childname];
     });
   }
 
   private async parseSchemas(): Promise<void> {
-    const schemas: {
+    const unordered: {
       [key: string]: NamespaceSchema[];
     } = {};
     await Promise.all(
@@ -125,16 +125,16 @@ export class DownloadParse {
             const schema: NamespaceSchema[] = JSON.parse(
               stripJsonComments(jsonBuffer.toString())
             );
-            schemas[file] = schema;
+            unordered[file] = schema;
           })
         );
       })
     );
 
-    Object.keys(schemas)
+    Object.keys(unordered)
       .sort()
       .forEach(file => {
-        this.schemas.raw.set(file, schemas[file]);
+        this.schemas.raw[file] = unordered[file];
       });
   }
 
