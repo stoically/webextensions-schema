@@ -3,7 +3,7 @@ export interface SchemaRaw {
 }
 
 export interface SchemaNamespaces {
-  [key: string]: NamespaceSchema;
+  [key: string]: NamespaceSchema[];
 }
 
 export interface Schema {

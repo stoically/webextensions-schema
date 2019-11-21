@@ -11,7 +11,7 @@ describe('WebExtensionsSchema', () => {
   it('should provide the schema namespaces', async () => {
     const schema = await webExtensionsSchema();
     const { privacy, manifest } = schema.namespaces();
-    assert(privacy.namespace === 'privacy');
-    assert(Array.isArray(manifest.types));
+    assert(privacy[0].namespace === 'privacy');
+    assert(Array.isArray(manifest[0].types));
   });
 });

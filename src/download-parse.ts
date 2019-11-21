@@ -60,31 +60,13 @@ export class DownloadParse {
 
   private extractNamespaces(): void {
     Object.values(this.schemas.raw).forEach(schemaJson => {
-      schemaJson
-        .filter(namespace =>
-          namespace.namespace === 'manifest'
-            ? this.extractManifest(namespace)
-            : true
-        )
-        .forEach(namespace => {
-          this.schemas.namespaces[namespace.namespace] = namespace;
-        });
+      schemaJson.forEach(namespace => {
+        if (!this.schemas.namespaces[namespace.namespace]) {
+          this.schemas.namespaces[namespace.namespace] = [];
+        }
+        this.schemas.namespaces[namespace.namespace].push(namespace);
+      });
     });
-  }
-
-  private extractManifest(namespace: NamespaceSchema): false {
-    if (!this.schemas.namespaces.manifest) {
-      this.schemas.namespaces.manifest = namespace;
-    }
-    if (!this.schemas.namespaces.manifest.types) {
-      this.schemas.namespaces.manifest.types = [];
-    }
-    if (namespace.types) {
-      this.schemas.namespaces.manifest.types = this.schemas.namespaces.manifest.types.concat(
-        namespace.types
-      );
-    }
-    return false;
   }
 
   private async parseSchemas(): Promise<void> {

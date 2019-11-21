@@ -54,26 +54,26 @@ Sample:
 
 ### schema.namespaces()
 
-Returns an `Object` with namespace name as key and namespace content as value. Multiple manifest namespaces are combined into one `manifest` namespace.
+Returns an `Object` with namespace name as key and an `Array` of namespaces as value.
 
 Sample:
 
 ```js
 {
-  manifest: {
-    namespace: 'manifest',
-    types: [
-      [Object], [Object], [Object], [Object], [Object],
-      ...
-    ]
-  },
-  tabs: {
-    namespace: 'tabs',
-    functions: [
-      [Object], [Object], [Object],
-      ...
-    ]
-  }
+  manifest: [
+    { namespace: 'manifest', types: [Array] },
+    { namespace: 'manifest', types: [Array] },
+    ...
+  ],
+  tabs: [
+    {
+      namespace: 'tabs',
+      functions: [
+        [Object], [Object], [Object],
+        ...
+      ]
+    }
+  ]
 }
 ```
 
