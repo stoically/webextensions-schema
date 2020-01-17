@@ -11,7 +11,7 @@
     "build": "npm-run-all lint test build:tsc",
     "build:tsc": "tsc -p tsconfig.build.json",
     "watch": "tsc --watch",
-    "lint": "eslint {src,test}/**/*.ts",
+    "lint": "eslint '{src,test}'/**/*.ts",
     "test": "ts-mocha --timeout 30000"
   },
   "keywords": [
