@@ -1,6 +1,6 @@
 {
   "name": "webextensions-schema",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Programmatically consume the WebExtensions Schema JSON files",
   "main": "dist/index.js",
   "repository": {
@@ -26,7 +26,8 @@
   "license": "MPL-2.0",
   "files": [
     "dist",
-    "downloads"
+    "downloads",
+    ".schemas"
   ],
   "types": "dist",
   "devDependencies": {
