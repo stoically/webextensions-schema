@@ -1,5 +1,5 @@
 import assert from 'assert';
-import webExtensionsSchema from '../src';
+import webExtensionsSchema from '../src/index.js';
 
 describe('WebExtensionsSchema', () => {
   it('should provide the raw schema', async () => {
