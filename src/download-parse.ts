@@ -1,9 +1,14 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import request from 'request';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { pipeline } from 'node:stream';
+import { promisify } from 'node:util';
+import fetch from 'node-fetch';
 import unzipper from 'unzipper';
 import stripJsonComments from 'strip-json-comments';
-import { Schema, NamespaceSchema } from './types';
+import { Schema, NamespaceSchema } from './types.js';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export class DownloadParse {
   private _tag!: string;
@@ -59,8 +64,8 @@ export class DownloadParse {
   }
 
   private extractNamespaces(): void {
-    Object.values(this.schemas.raw).forEach(schemaJson => {
-      schemaJson.forEach(namespace => {
+    Object.values(this.schemas.raw).forEach((schemaJson) => {
+      schemaJson.forEach((namespace) => {
         if (!this.schemas.namespaces[namespace.namespace]) {
           this.schemas.namespaces[namespace.namespace] = [];
         }
@@ -74,12 +79,12 @@ export class DownloadParse {
       [key: string]: NamespaceSchema[];
     } = {};
     await Promise.all(
-      this.schemaTypes.map(async type => {
+      this.schemaTypes.map(async (type) => {
         const dir = path.join(this.tagDir, type, ...this.schemasDir);
         const files = await fs.readdir(dir);
 
         await Promise.all(
-          files.map(async file => {
+          files.map(async (file) => {
             if (path.extname(file) !== '.json') {
               return;
             }
@@ -96,7 +101,7 @@ export class DownloadParse {
 
     Object.keys(unordered)
       .sort()
-      .forEach(file => {
+      .forEach((file) => {
         this.schemas.raw[file] = unordered[file];
       });
   }
@@ -108,20 +113,23 @@ export class DownloadParse {
   }
 
   private async downloadSchema(type: string): Promise<void> {
-    return new Promise(resolve => {
-      const url = this.getDownloadArchiveUrl(type);
-      request.get(url).on('response', response => {
-        if (response.statusCode !== 200) {
-          throw new Error(
-            `http status ${response.statusCode} while trying to download ${url} - probably invalid tag name`
-          );
-        }
+    const url = this.getDownloadArchiveUrl(type);
+    const response = await fetch(url);
+    if (response.status !== 200) {
+      throw new Error(
+        `http status ${response.status} while trying to download ${url} - probably invalid tag name`
+      );
+    }
 
-        response
-          .pipe(unzipper.Extract({ path: this.outDir }))
-          .on('finish', resolve);
-      });
-    });
+    if (!response.body) {
+      throw new Error('http response with empty body');
+    }
+
+    const streamPipeline = promisify(pipeline);
+    await streamPipeline(
+      response.body,
+      unzipper.Extract({ path: this.outDir })
+    );
   }
 
   private async tagDirExists(): Promise<boolean> {
@@ -134,23 +142,19 @@ export class DownloadParse {
   }
 
   private async fetchLatestStableTag(): Promise<void> {
-    return new Promise(resolve => {
-      request
-        .head({ followRedirect: false, url: this.mozLatestFxURL })
-        .on('response', response => {
-          const [, release] =
-            response.headers.location?.match(
-              /\/pub\/firefox\/releases\/([^/]+)\//
-            ) || [];
-
-          if (!release) {
-            throw new Error("Couldn't automatically resolve latest stable tag");
-          }
-
-          this.tag = `FIREFOX_${release.replace(/\./g, '_')}_RELEASE`;
-          resolve();
-        });
+    const response = await fetch(this.mozLatestFxURL, {
+      method: 'HEAD',
+      redirect: 'manual',
     });
+    const location = response.headers.get('location');
+    const [, release] =
+      location?.match(/\/pub\/firefox\/releases\/([^/]+)\//) || [];
+
+    if (!release) {
+      throw new Error("Couldn't automatically resolve latest stable tag");
+    }
+
+    this.tag = `FIREFOX_${release.replace(/\./g, '_')}_RELEASE`;
   }
 
   private getDownloadArchiveUrl(type: string): string {
